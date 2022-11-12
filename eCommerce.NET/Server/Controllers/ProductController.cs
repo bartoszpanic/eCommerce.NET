@@ -22,7 +22,7 @@ namespace Server.Controllers
         [HttpGet]
         public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProducts()
         {
-            var products = await _productService.GetAllProductsAsync();
+            var products = await _productService.GetProductsAsync();
             return Ok(products);
         }
     }

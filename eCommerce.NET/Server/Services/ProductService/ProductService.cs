@@ -10,7 +10,7 @@ namespace eCommerce.NET.Server.Services.ProductService
         {
             _context = context;
         }
-        public async Task<ServiceResponse<List<Product>>> GetAllProductsAsync()
+        public async Task<ServiceResponse<List<Product>>> GetProductsAsync()
         {
             //implement strategy pattern
             var response = new ServiceResponse<List<Product>>
