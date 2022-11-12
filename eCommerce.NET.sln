@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.32912.340
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eCommerce.NET.Server", "eCommerce.NET\Server\eCommerce.NET.Server.csproj", "{5EBB8A18-E209-4C8E-A409-E7A6E3921DEF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eCommerce.NET.Server", "eCommerce.NET\Server\eCommerce.NET.Server.csproj", "{5EBB8A18-E209-4C8E-A409-E7A6E3921DEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eCommerce.NET.Client", "eCommerce.NET\Client\eCommerce.NET.Client.csproj", "{8A44881B-A080-4C1D-9F2C-F73E0E8F5B70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eCommerce.NET.Client", "eCommerce.NET\Client\eCommerce.NET.Client.csproj", "{8A44881B-A080-4C1D-9F2C-F73E0E8F5B70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eCommerce.NET.Shared", "eCommerce.NET\Shared\eCommerce.NET.Shared.csproj", "{304EA584-4C4B-46A3-BABE-0927DE33C665}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eCommerce.NET.Shared", "eCommerce.NET\Shared\eCommerce.NET.Shared.csproj", "{304EA584-4C4B-46A3-BABE-0927DE33C665}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
