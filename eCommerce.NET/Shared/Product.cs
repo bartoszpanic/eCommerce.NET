@@ -15,5 +15,7 @@ namespace eCommerce.NET.Shared
         public virtual string ImageUrl { get; set; } = string.Empty;
         [Column(TypeName = "decimal(18,2)")]
         public virtual decimal Price { get; set; }
+        public virtual Category? Category { get; set; }
+        public virtual int CategoryId { get; set; }
     }
 }
