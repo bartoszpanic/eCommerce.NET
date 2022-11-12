@@ -1,7 +1,4 @@
-﻿using eCommerce.NET.Shared;
-using System.Net.Http.Json;
-
-namespace eCommerce.NET.Client.Services.ProductService
+﻿namespace eCommerce.NET.Client.Services.ProductService
 {
     public class ProductService : IProductService
     {
@@ -11,7 +8,7 @@ namespace eCommerce.NET.Client.Services.ProductService
         {
             _http = http;
         }
-        public List<Product> Products { get ; set ; } = new List<Product>();
+        public List<Product> Products { get; set; } = new List<Product>();
 
         public async Task<ServiceResponse<Product>> GetProduct(int id)
         {
@@ -19,13 +16,19 @@ namespace eCommerce.NET.Client.Services.ProductService
             return result;
         }
 
-        public async Task GetProducts()
+        public event Action ProductsChanged;
+
+        public async Task GetProducts(string? categoryUrl = null)
         {
-            var result = await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/product");
-            if (result != null &&result.Data != null)
+            var result = categoryUrl == null ?
+                await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/product") : 
+                await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>($"api/product/category/{categoryUrl}");
+            if (result != null && result.Data != null)
             {
                 Products = result.Data;
             }
+
+            ProductsChanged.Invoke();
 
         }
     }
