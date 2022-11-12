@@ -30,10 +30,7 @@ namespace Server.Controllers
         public async Task<ActionResult<ServiceResponse<Product>>> GetProduct(int productId)
         {
             var result = await _productService.GetProductAsync(productId);
-            if (result.Data == null)
-            {
-                return NotFound(result);
-            }
+
             return Ok(result);
         }
     }

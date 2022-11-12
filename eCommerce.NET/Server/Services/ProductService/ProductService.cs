@@ -23,7 +23,6 @@ namespace eCommerce.NET.Server.Services.ProductService
             else
             {
                 response.Data = product;
-                response.Message = "Correct response";
             }
             return response;
         }
