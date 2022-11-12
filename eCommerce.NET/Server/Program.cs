@@ -1,6 +1,7 @@
 global using Microsoft.EntityFrameworkCore;
+global using Server.Data;
 using Microsoft.AspNetCore.ResponseCompression;
-using Server.Data;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
