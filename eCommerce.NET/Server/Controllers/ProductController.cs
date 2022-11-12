@@ -25,6 +25,17 @@ namespace Server.Controllers
             var products = await _productService.GetProductsAsync();
             return Ok(products);
         }
+
+        [HttpGet("{productId}")]
+        public async Task<ActionResult<ServiceResponse<Product>>> GetProduct(int productId)
+        {
+            var result = await _productService.GetProductAsync(productId);
+            if (result.Data == null)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
+        }
     }
 
 }
