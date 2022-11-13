@@ -13,9 +13,8 @@ namespace eCommerce.NET.Shared
         public virtual string Title { get; set; } = string.Empty;
         public virtual string Description { get; set; } = string.Empty;
         public virtual string ImageUrl { get; set; } = string.Empty;
-        [Column(TypeName = "decimal(18,2)")]
-        public virtual decimal Price { get; set; }
         public virtual Category? Category { get; set; }
         public virtual int CategoryId { get; set; }
+        public virtual List<ProductVariant> Variants { get; set; } = new List<ProductVariant>();
     }
 }
