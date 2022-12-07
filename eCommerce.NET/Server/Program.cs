@@ -2,7 +2,6 @@ global using Microsoft.EntityFrameworkCore;
 global using Server.Data;
 global using eCommerce.NET.Server.Services.CategoryService;
 global using eCommerce.NET.Server.Services.ProductService;
-using Microsoft.AspNetCore.ResponseCompression;
 using eCommerce.NET.Server.Services.CartService;
 
 var builder = WebApplication.CreateBuilder(args);
