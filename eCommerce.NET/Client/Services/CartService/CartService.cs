@@ -51,8 +51,8 @@ namespace eCommerce.NET.Client.Services.CartService
             }
 
             var cartItem = cart.Find(x => x.ProductId == productId
-            && x.ProductTypeId == productTypeId);
-            if (cartItem == null)
+                && x.ProductTypeId == productTypeId);
+            if (cartItem != null)
             {
                 cart.Remove(cartItem);
                 await _localStorage.SetItemAsync("cart", cart);
