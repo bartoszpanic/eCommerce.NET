@@ -14,5 +14,6 @@ namespace eCommerce.NET.Shared
         public virtual string ProductType { get; set; } = string.Empty;
         public virtual string ImageUrl { get; set; } = string.Empty;
         public virtual decimal Price { get; set; }
+        public int Quantity { get; set; }
     }
 }
