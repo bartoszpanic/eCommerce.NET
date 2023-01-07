@@ -24,7 +24,7 @@ public class AuthService : IAuthService
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
-        return new ServiceResponse<int>() {Success = true, Message = "User register correctly", Data = user.Id};
+        return new ServiceResponse<int>() {Success = true, Message = "User register successful", Data = user.Id};
     }
 
     private async Task<bool> UserExist(string email)
