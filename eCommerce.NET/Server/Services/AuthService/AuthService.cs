@@ -1,15 +1,21 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using eCommerce.NET.Shared;
+using Microsoft.IdentityModel.Tokens;
 
 namespace eCommerce.NET.Server.Services.AuthService;
 
 public class AuthService : IAuthService
 {
     private readonly DataContext _context;
+    private readonly IConfiguration _configuration;
 
-    public AuthService(DataContext context)
+    public AuthService(DataContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
     }
     public async Task<ServiceResponse<int>> Register(User user, string password)
     {
@@ -27,9 +33,60 @@ public class AuthService : IAuthService
         return new ServiceResponse<int>() {Success = true, Message = "User register successful", Data = user.Id};
     }
 
-    private async Task<bool> UserExist(string email)
+    public async Task<bool> UserExist(string email)
     {
         return await _context.Users.AnyAsync(user => user.Email.ToLower().Equals(email.ToLower()));
+    }
+
+    public async Task<ServiceResponse<string>> Login(string email, string password)
+    {
+        var response = new ServiceResponse<string>();
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.Email.ToLower().Equals(email.ToLower()));
+        if (user == null)
+        {
+            response.Success = false;
+            response.Message = "User not exist or wrong password";
+        }
+        else if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+        {
+            response.Success = false;
+            response.Message = "User not exist or wrong password";
+        }
+        else
+        {
+            response.Data = CreateToken(user);
+        }
+        
+        return response;
+    }
+    private string CreateToken(User user)
+    {
+        List<Claim> claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Email)
+        };
+
+        var key = new SymmetricSecurityKey(
+            System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+        var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddDays(1), signingCredentials: creds);
+
+        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+        
+        return jwt;
+    }
+
+    private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+    {
+        using (var hmac = new HMACSHA512(passwordSalt))
+        {
+            var computedHash =
+                hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            return computedHash.SequenceEqual(passwordHash);
+        }
     }
 
     private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
