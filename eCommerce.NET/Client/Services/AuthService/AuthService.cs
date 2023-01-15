@@ -21,4 +21,18 @@ public class AuthService : IAuthService
         }
         return await result.Content.ReadFromJsonAsync<ServiceResponse<int>>();
     }
+
+    public async Task<ServiceResponse<string>> Login(UserLogin request)
+    {
+        var result = await _http.PostAsJsonAsync("api/auth/login", request);
+        if (result == null)
+        {
+            return new ServiceResponse<string>
+            {
+                Success = false,
+                Message = "Error"
+            };
+        }
+        return await result.Content.ReadFromJsonAsync<ServiceResponse<string>>();
+    }
 }
