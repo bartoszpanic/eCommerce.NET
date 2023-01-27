@@ -54,6 +54,14 @@ namespace eCommerce.NET.Server.Services.CartService
             }
             return result;
         }
-    
+
+        public async Task<ServiceResponse<List<CartProductResponse>>> StoreCartItems(List<CartItem> cartItems, int userId)
+        {
+            cartItems.ForEach(cartItem => cartItem.UserId = userId);
+            _context.CartItems.AddRange(cartItems);
+            await _context.SaveChangesAsync();
+
+            return await GetCartProductsAsync(await _context.CartItems.Where(c => c.UserId == userId).ToListAsync());
+        }
     }
 }
