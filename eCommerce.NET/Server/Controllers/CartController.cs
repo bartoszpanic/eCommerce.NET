@@ -47,6 +47,14 @@ namespace eCommerce.NET.Server.Controllers
 
             return Ok(result);
         }
+        
+        [HttpPost("add")]
+        public async Task<ActionResult<ServiceResponse<bool>>> AddCartItems(CartItem cartItem)
+        {
+            var result = await _cartService.AddToCart(cartItem);
+
+            return Ok(result);
+        }
 
     }
 }

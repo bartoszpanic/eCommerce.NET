@@ -22,27 +22,25 @@ namespace eCommerce.NET.Client.Services.CartService
         {
             if (await IsUserAuthenticated())
             {
-                Console.WriteLine("user auth");
+                await _httpClient.PostAsJsonAsync("api/cart/add", cartItem);
             }
             else
             {
-                Console.WriteLine("user not auth");
-            }
-            
-            var cart = await _localStorage.GetItemAsync<List<CartItem>>("cart");
+                var cart = await _localStorage.GetItemAsync<List<CartItem>>("cart");
 
-            var sameItem = cart.Find(x => x.ProductId == cartItem.ProductId && x.ProductTypeId == cartItem.ProductTypeId);
+                var sameItem = cart.Find(x => x.ProductId == cartItem.ProductId && x.ProductTypeId == cartItem.ProductTypeId);
 
-            if(sameItem == null)
-            {
-                cart.Add(cartItem);
-            }
-            else
-            {
-                sameItem.Quantity += cartItem.Quantity;
-            }
+                if(sameItem == null)
+                {
+                    cart.Add(cartItem);
+                }
+                else
+                {
+                    sameItem.Quantity += cartItem.Quantity;
+                }
 
-            await _localStorage.SetItemAsync("cart", cart);
+                await _localStorage.SetItemAsync("cart", cart);
+            }
             await GetCartItemsCount();
         }
 
