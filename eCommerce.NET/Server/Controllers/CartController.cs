@@ -39,6 +39,14 @@ namespace eCommerce.NET.Server.Controllers
 
             return Ok(result);
         }
+        
+        [HttpGet]
+        public async Task<ActionResult<ServiceResponse<List<CartProductResponse>>>>  GetDbCartProducts()
+        {
+            var result = await _cartService.GetDbCartProducts();
+
+            return Ok(result);
+        }
 
     }
 }

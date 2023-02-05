@@ -67,7 +67,7 @@ namespace eCommerce.NET.Server.Services.CartService
             _context.CartItems.AddRange(cartItems);
             await _context.SaveChangesAsync();
 
-            return await GetCartProductsAsync(await _context.CartItems.Where(c => c.UserId == GetUserId()).ToListAsync());
+            return await GetDbCartProducts();
         }
 
         public async Task<ServiceResponse<int>> GetCartItemsCount()
@@ -77,6 +77,12 @@ namespace eCommerce.NET.Server.Services.CartService
             {
                 Data = count
             };
+        }
+        
+        public async Task<ServiceResponse<List<CartProductResponse>>> GetDbCartProducts()
+        {
+            return await GetCartProductsAsync(
+                await _context.CartItems.Where(c => c.UserId == GetUserId()).ToListAsync());
         }
     }
 }

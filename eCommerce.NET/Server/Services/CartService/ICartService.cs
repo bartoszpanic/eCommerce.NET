@@ -6,6 +6,7 @@ namespace eCommerce.NET.Server.Services.CartService
     {
         Task<ServiceResponse<List<CartProductResponse>>> GetCartProductsAsync(List<CartItem> cartItems);
         Task<ServiceResponse<List<CartProductResponse>>> StoreCartItems(List<CartItem> cartItems);
-        Task<ServiceResponse<int>> GetCartItemsCount(); 
+        Task<ServiceResponse<int>> GetCartItemsCount();
+        Task<ServiceResponse<List<CartProductResponse>>> GetDbCartProducts();
     }
 }
