@@ -1,6 +1,7 @@
 @inject ILocalStorageService LocalStorageService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
+@inject ICartService CartService
 
 <div class="dropdown">
     <button @onclick="ToggleUserMenu"
@@ -44,6 +45,7 @@
     {
     //delete authToken
         await LocalStorageService.RemoveItemAsync("authToken");
+        await CartService.GetCartItemsCount();
     //change state
         await AuthenticationStateProvider.GetAuthenticationStateAsync();
     //navigation to page after run method
