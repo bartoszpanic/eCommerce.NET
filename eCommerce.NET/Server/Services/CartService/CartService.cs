@@ -105,5 +105,22 @@ namespace eCommerce.NET.Server.Services.CartService
 
             return new ServiceResponse<bool> { Data = true };
         }
+
+        public async Task<ServiceResponse<bool>> UpdateQuantity(CartItem cartItem)
+        {
+            var dbItem = await _context.CartItems.FirstOrDefaultAsync(c => c.ProductId == cartItem.ProductId &&
+                                                                             c.ProductTypeId ==
+                                                                             cartItem.ProductTypeId &&
+                                                                             c.UserId == GetUserId());
+            if (dbItem == null)
+            {
+                return new ServiceResponse<bool>() { Data = false, Message = "Cart item not exist", Success = false };
+            }
+
+            dbItem.Quantity = cartItem.Quantity;
+            await _context.SaveChangesAsync();
+
+            return new ServiceResponse<bool>() { Data = true, Success = true };
+        }
     }
 }
