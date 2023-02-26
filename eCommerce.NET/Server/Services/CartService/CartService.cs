@@ -122,5 +122,27 @@ namespace eCommerce.NET.Server.Services.CartService
 
             return new ServiceResponse<bool>() { Data = true, Success = true };
         }
+
+        public async Task<ServiceResponse<bool>> RemoveItemFromCart(int productId, int productTypeId)
+        {
+            var dbItem = await _context.CartItems.FirstOrDefaultAsync(c => c.ProductId == productId &&
+                                                                           c.ProductTypeId ==
+                                                                           productTypeId &&
+                                                                           c.UserId == GetUserId());
+            if (dbItem == null)
+            {
+                return new ServiceResponse<bool>() { Data = false, Message = "Cart item not exist", Success = false };
+            }
+
+            _context.CartItems.Remove(dbItem);
+            await _context.SaveChangesAsync();
+
+            return new ServiceResponse<bool>
+            {
+                Data = true,
+                Message = "Succesfuly removed",
+                Success = true
+            };
+        }
     }
 }

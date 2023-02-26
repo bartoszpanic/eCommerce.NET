@@ -27,10 +27,14 @@ namespace eCommerce.NET.Client.Services.CartService
             else
             {
                 var cart = await _localStorage.GetItemAsync<List<CartItem>>("cart");
+                if (cart == null)
+                {
+                    cart = new List<CartItem>();
+                }
 
-                var sameItem = cart.Find(x => x.ProductId == cartItem.ProductId && x.ProductTypeId == cartItem.ProductTypeId);
-
-                if(sameItem == null)
+                var sameItem = cart.Find(x => x.ProductId == cartItem.ProductId &&
+                                              x.ProductTypeId == cartItem.ProductTypeId);
+                if (sameItem == null)
                 {
                     cart.Add(cartItem);
                 }
@@ -67,19 +71,25 @@ namespace eCommerce.NET.Client.Services.CartService
 
         public async Task RemoveProductFromCart(int productId, int productTypeId)
         {
-            var cart = await _localStorage.GetItemAsync<List<CartItem>>("cart");
-            if (cart == null)
+            if (await IsUserAuthenticated())
             {
-                return;
+                await _httpClient.DeleteAsync($"api/Cart/{productId}/{productTypeId}");
             }
-
-            var cartItem = cart.Find(x => x.ProductId == productId
-                && x.ProductTypeId == productTypeId);
-            if (cartItem != null)
+            else
             {
-                cart.Remove(cartItem);
-                await _localStorage.SetItemAsync("cart", cart);
-                await GetCartItemsCount();
+                var cart = await _localStorage.GetItemAsync<List<CartItem>>("cart");
+                if (cart == null)
+                {
+                    return;
+                }
+
+                var cartItem = cart.Find(x => x.ProductId == productId
+                                              && x.ProductTypeId == productTypeId);
+                if (cartItem != null)
+                {
+                    cart.Remove(cartItem);
+                    await _localStorage.SetItemAsync("cart", cart);
+                }
             }
         }
 
@@ -148,7 +158,7 @@ namespace eCommerce.NET.Client.Services.CartService
             OnChange.Invoke();
         }
 
-        private async Task<bool> IsUserAuthenticated()
+        public async Task<bool> IsUserAuthenticated()
         {
             return (await _authStateProvider.GetAuthenticationStateAsync()).User.Identity.IsAuthenticated;
         }
