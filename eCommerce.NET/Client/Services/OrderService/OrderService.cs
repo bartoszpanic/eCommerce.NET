@@ -1,4 +1,4 @@
-using Blazored.LocalStorage;
+using eCommerce.NET.Client.Services.AuthService;
 using Microsoft.AspNetCore.Components;
 
 namespace eCommerce.NET.Client.Services.OrderService;
@@ -7,17 +7,17 @@ public class OrderService : IOrderService
 {
     private readonly NavigationManager _navigationManager;
     private readonly HttpClient _httpClient;
-    private readonly AuthenticationStateProvider _authStateProvider;
+    private readonly IAuthService _authService;
 
-    public OrderService(NavigationManager navigationManager, HttpClient httpClient, AuthenticationStateProvider authStateProvider)
+    public OrderService(NavigationManager navigationManager, HttpClient httpClient, IAuthService authService)
     {
         _navigationManager = navigationManager;
         _httpClient = httpClient;
-        _authStateProvider = authStateProvider;
+        _authService = authService;
     }
     public async Task PlaceOrder()
     {
-        if (await IsUserAuthenticated())
+        if (await _authService.IsUserAuthenticated())
         {
             await _httpClient.PostAsync("api/order", null);
         }
@@ -25,10 +25,5 @@ public class OrderService : IOrderService
         {
             _navigationManager.NavigateTo("login");
         }
-    }
-    
-    public async Task<bool> IsUserAuthenticated()
-    {
-        return (await _authStateProvider.GetAuthenticationStateAsync()).User.Identity.IsAuthenticated;
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Blazored.LocalStorage;
-using eCommerce.NET.Shared;
+using eCommerce.NET.Client.Services.AuthService;
 
 namespace eCommerce.NET.Client.Services.CartService
 {
@@ -7,20 +7,20 @@ namespace eCommerce.NET.Client.Services.CartService
     {
         private readonly ILocalStorageService _localStorage;
         private readonly HttpClient _httpClient;
-        private readonly AuthenticationStateProvider _authStateProvider;
+        private readonly IAuthService _authService;
 
-        public CartService(ILocalStorageService localStorage, HttpClient httpClient, AuthenticationStateProvider authStateProvider)
+        public CartService(ILocalStorageService localStorage, HttpClient httpClient, IAuthService authService)
         {
             _localStorage = localStorage;
             _httpClient = httpClient;
-            _authStateProvider = authStateProvider;
+            _authService = authService;
         }
 
         public event Action OnChange;
 
         public async Task AddToCart(CartItem cartItem)
         {
-            if (await IsUserAuthenticated())
+            if (await _authService.IsUserAuthenticated())
             {
                 await _httpClient.PostAsJsonAsync("api/cart/add", cartItem);
             }
@@ -50,7 +50,7 @@ namespace eCommerce.NET.Client.Services.CartService
 
         public async Task<List<CartProductResponse>> GetCartProducts()
         {
-            if (await IsUserAuthenticated())
+            if (await _authService.IsUserAuthenticated())
             {
                 var response = await _httpClient.GetFromJsonAsync<ServiceResponse<List<CartProductResponse>>>("api/cart");
                 return response.Data;
@@ -71,7 +71,7 @@ namespace eCommerce.NET.Client.Services.CartService
 
         public async Task RemoveProductFromCart(int productId, int productTypeId)
         {
-            if (await IsUserAuthenticated())
+            if (await _authService.IsUserAuthenticated())
             {
                 await _httpClient.DeleteAsync($"api/Cart/{productId}/{productTypeId}");
             }
@@ -95,7 +95,7 @@ namespace eCommerce.NET.Client.Services.CartService
 
         public async Task UpdateQuantity(CartProductResponse product)
         {
-            if (await IsUserAuthenticated())
+            if (await _authService.IsUserAuthenticated())
             {
                 var request = new CartItem
                 {
@@ -142,7 +142,7 @@ namespace eCommerce.NET.Client.Services.CartService
 
         public async Task GetCartItemsCount()
         {
-            if (await IsUserAuthenticated())
+            if (await _authService.IsUserAuthenticated())
             {
                 var result = await _httpClient.GetFromJsonAsync<ServiceResponse<int>>("api/Cart/count");
                 var count = result.Data;
@@ -157,11 +157,5 @@ namespace eCommerce.NET.Client.Services.CartService
             
             OnChange.Invoke();
         }
-
-        public async Task<bool> IsUserAuthenticated()
-        {
-            return (await _authStateProvider.GetAuthenticationStateAsync()).User.Identity.IsAuthenticated;
-        }
-
     }
 }

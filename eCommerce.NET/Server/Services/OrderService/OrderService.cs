@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using eCommerce.NET.Shared;
 
 namespace eCommerce.NET.Server.Services.OrderService;
@@ -7,20 +6,17 @@ public class OrderService : IOrderService
 {
     private readonly DataContext _context;
     private readonly ICartService _cartService;
-    private readonly IHttpContextAccessor _contextAccessor;
+    private readonly IAuthService _authService;
 
     public OrderService(DataContext context,
         ICartService cartService,
-        IHttpContextAccessor contextAccessor)
+        IAuthService authService)
     {
         _context = context;
         _cartService = cartService;
-        _contextAccessor = contextAccessor;
+        _authService = authService;
     }
 
-    private int GetUserId() => int.Parse(_contextAccessor.HttpContext
-        .User.FindFirstValue(ClaimTypes.NameIdentifier));
-    
     public async Task<ServiceResponse<bool>> PlaceOrder()
     {
         var products = (await _cartService.GetDbCartProducts()).Data;
@@ -39,7 +35,7 @@ public class OrderService : IOrderService
 
         var order = new Order()
         {
-            UserId = GetUserId(),
+            UserId = _authService.GetUserId(),
             OrderItems = orderItems,
             OrderDate = DateTime.Now,
             TotalPrice = totalPrice
@@ -48,7 +44,7 @@ public class OrderService : IOrderService
         _context.Orders.Add(order);
         
         _context.CartItems.RemoveRange(_context.CartItems
-            .Where(c => c.UserId == GetUserId()));
+            .Where(c => c.UserId == _authService.GetUserId()));
         
         await _context.SaveChangesAsync();
 
