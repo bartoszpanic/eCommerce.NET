@@ -46,6 +46,10 @@ public class OrderService : IOrderService
         };
 
         _context.Orders.Add(order);
+        
+        _context.CartItems.RemoveRange(_context.CartItems
+            .Where(c => c.UserId == GetUserId()));
+        
         await _context.SaveChangesAsync();
 
         return new ServiceResponse<bool>() { Data = true, Message = "", Success = true };
