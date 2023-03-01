@@ -30,6 +30,20 @@ public class OrderService : IOrderService
     public async Task<List<OrderOverviewResponse>> GetOrders()
     {
         var result = await _httpClient.GetFromJsonAsync<ServiceResponse<List<OrderOverviewResponse>>>("api/order");
+        if (result == null || result.Data == null)
+        {
+            return new List<OrderOverviewResponse>();
+        }
+        return result.Data;
+    }
+
+    public async Task<OrderDetailsResponse> GetOrderDetails(int orderId)
+    {
+        var result = await _httpClient.GetFromJsonAsync<ServiceResponse<OrderDetailsResponse>>($"api/order/{orderId}");
+        if (result == null || result.Data == null)
+        {
+            return new OrderDetailsResponse();
+        }
         return result.Data;
     }
 }
