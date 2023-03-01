@@ -26,4 +26,10 @@ public class OrderService : IOrderService
             _navigationManager.NavigateTo("login");
         }
     }
+
+    public async Task<List<OrderOverviewResponse>> GetOrders()
+    {
+        var result = await _httpClient.GetFromJsonAsync<ServiceResponse<List<OrderOverviewResponse>>>("api/order");
+        return result.Data;
+    }
 }
