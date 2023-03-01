@@ -1,7 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using eCommerce.NET.Shared;
 using Microsoft.IdentityModel.Tokens;
 
@@ -11,11 +10,13 @@ public class AuthService : IAuthService
 {
     private readonly DataContext _context;
     private readonly IConfiguration _configuration;
+    private readonly IHttpContextAccessor _contextAccessor;
 
-    public AuthService(DataContext context, IConfiguration configuration)
+    public AuthService(DataContext context, IConfiguration configuration, IHttpContextAccessor contextAccessor)
     {
         _context = context;
         _configuration = configuration;
+        _contextAccessor = contextAccessor;
     }
     public async Task<ServiceResponse<int>> Register(User user, string password)
     {
@@ -82,7 +83,10 @@ public class AuthService : IAuthService
         return new ServiceResponse<bool>() { Data = true, Message = "Password has been changed" };
     }
 
-    private string CreateToken(User user)
+    public int GetUserId() => int.Parse(_contextAccessor.HttpContext
+            .User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+        private string CreateToken(User user)
     {
         List<Claim> claims = new List<Claim>
         {

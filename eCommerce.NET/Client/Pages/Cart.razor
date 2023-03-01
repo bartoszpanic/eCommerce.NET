@@ -1,5 +1,6 @@
 ﻿@page "/cart"
 @inject ICartService CartService
+@inject IOrderService OrderService
 
 <PageTitle>Shopping Cart</PageTitle>
 
@@ -8,6 +9,10 @@
 @if(cartProducts == null || cartProducts.Count == 0)
 {
     <span>@message</span>
+}
+else if(orderPlaced) 
+{
+    <span>Thank you for order! You can check your order <a href="orders">here</a></span>
 }
 else
 {
@@ -22,11 +27,11 @@ else
                     <h5><a href="/product/@product.ProductId">@product.Title</a></h5>
                     <span>@product.ProductType</span><br/>
                     <input type="number" value="@product.Quantity"
-                   @onchange="@((ChangeEventArgs e) => UpdateQuantity(e, product))"
-                   class="form-control input-quantity"
-                   min="1" />
+                           @onchange="@((ChangeEventArgs e) => UpdateQuantity(e, product))"
+                           class="form-control input-quantity"
+                           min="1" />
                     <button class="btn btn-danger" @onclick="@(() =>
-                        RemoveProductFromCart(product.ProductId, product.ProductTypeId))">
+                                                                 RemoveProductFromCart(product.ProductId, product.ProductTypeId))">
                         Delete
                     </button>
                 </div>
@@ -39,6 +44,7 @@ else
             Total (@cartProducts.Count): $@cartProducts.Sum(product => product.Price * product.Quantity)
         </div>
     </div>
+    <button @onclick="PlaceOrder" class="btn alert-success float-end mt-1">Place Order</button>
 }
 
 
@@ -46,9 +52,11 @@ else
 @code {
         List<CartProductResponse> cartProducts = null;
         string message = "Loading cart...";
+    bool orderPlaced = false;
 
     protected override async Task OnInitializedAsync()
     {
+        orderPlaced = false;
         await LoadCart();
     }
 
@@ -60,10 +68,11 @@ else
 
     private async Task LoadCart()
     {
-        if ((await CartService.GetCartItems()).Count == 0)
+        await CartService.GetCartItemsCount();
+        cartProducts = await CartService.GetCartProducts();
+        if (cartProducts == null || cartProducts.Count == 0)
         {
             message = "Your cart is empty.";
-            cartProducts = new List<CartProductResponse>();
         }
         else
         {
@@ -79,5 +88,12 @@ else
             product.Quantity = 1;
         }
         await CartService.UpdateQuantity(product);
+    }
+
+    private async Task PlaceOrder()
+    {
+        await OrderService.PlaceOrder();
+        await CartService.GetCartItemsCount();
+        orderPlaced = true;
     }
 }
